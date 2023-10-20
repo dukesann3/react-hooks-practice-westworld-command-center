@@ -2,7 +2,7 @@ import React from "react";
 import "../stylesheets/Area.css";
 import HostList from './HostList';
 
-function Area({ area, hosts, onSelectHost}) {
+function Area({ area, hosts, onSetSelectedHostId}) {
   const { name } = area;
   return (
     <div
@@ -13,7 +13,7 @@ function Area({ area, hosts, onSelectHost}) {
         {name.replace('_',' ')}
       </h3>
       {/* See Checkpoint 1 item 2 in the Readme for a clue as to what goes here */}
-      <HostList areaName={name} hosts={hosts} isArea={true} onSelectHost={onSelectHost}/>
+      <HostList areaName={name} hosts={hosts} isArea={true} onSetSelectedHostId={onSetSelectedHostId}/>
     </div>
   );
 }

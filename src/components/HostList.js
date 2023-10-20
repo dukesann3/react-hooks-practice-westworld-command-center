@@ -2,14 +2,14 @@ import React from "react";
 import { Card } from "semantic-ui-react";
 import Host from './Host'
 
-function HostList({hosts, isArea, areaName, onSelectHost}) {
+function HostList({hosts, isArea, areaName, onSetSelectedHostId}) {
 
   //returns Host on Area where they are assigned
   function hostsOnMap(){
     return hosts.map((host) => {
       const {area, active, id} = host;
       if(area === areaName && active){
-        return <Host key={id} host={host} onSelectHost={onSelectHost}/>
+        return <Host key={id} host={host} onSetSelectedHostId={onSetSelectedHostId}/>
       }
       return null;
     })
@@ -21,7 +21,7 @@ function HostList({hosts, isArea, areaName, onSelectHost}) {
     return hosts.map((host) => {
       const {active, id} = host;
       if(!active){
-        return <Host key={id} host={host} onSelectHost={onSelectHost}/>
+        return <Host key={id} host={host} onSetSelectedHostId={onSetSelectedHostId}/>
       }
       return null;
     })

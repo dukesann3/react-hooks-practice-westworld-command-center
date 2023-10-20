@@ -9,10 +9,11 @@ import {
   Divider,
 } from "semantic-ui-react";
 import "../stylesheets/HostInfo.css";
+import { Log } from "../services/Log";
 
-function HostInfo({ selectedHost, alterHostStatus, areas }) {
+function HostInfo({alterHostStatus, areas, hosts, selectedHostId, addLog}) {
 
-  const { firstName, active, imageUrl, gender, area, id } = selectedHost;
+  const { firstName, active, imageUrl, gender, area, id } = hosts.find((host) => host.id === selectedHostId);
 
   // This state is just to show how the dropdown component works.
   // Options have to be formatted in this way (array of objects with keys of: key, text, value)
@@ -36,7 +37,16 @@ function HostInfo({ selectedHost, alterHostStatus, areas }) {
     const changeAreaForm = {
       area: value
     }
-    alterHostStatus(changeAreaForm, id);
+    const maxOccupancyForArea = areas.find((area) => area.name === value).limit;
+    const countHostInArea = hosts.filter((host) => host.area === value).length;
+    if(countHostInArea >= maxOccupancyForArea){
+      addLog(Log.error(`Too many hosts in ${value.replace('_',' ')}. ${firstName} cannot be added.`));
+    }
+    else{
+      alterHostStatus(changeAreaForm, id);
+      addLog(Log.notify(`${firstName} moved to ${value.replace('_',' ')}`));
+    }
+
   }
 
   function handleRadioChange() {
@@ -45,6 +55,7 @@ function HostInfo({ selectedHost, alterHostStatus, areas }) {
       active: !active
     }
     //--> patch request from props here!!!
+    addLog(Log.warn(`${firstName} is ${!active ? 'deployed' : 'decommissioned'} `));
     alterHostStatus(activeStatusForm, id);
   }
 

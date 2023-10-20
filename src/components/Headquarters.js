@@ -5,16 +5,16 @@ import "../stylesheets/Headquarters.css";
 import LogPanel from './LogPanel'
 import ColdStorage from "./ColdStorage";
 
-function Headquarters({hosts, onSelectHost, selectedHost, alterHostStatus, areas, onActivateState, activateState, alterAllHostActiveStatus}) {
+function Headquarters({hosts, alterHostStatus, areas, onActivateState, activateState, alterAllHostActiveStatus, selectedHostId, onSetSelectedHostId, addLog, log}) {
 
   return (
     <Grid celled="internally">
-      <Grid.Column width={6}><ColdStorage hosts={hosts} onSelectHost={onSelectHost}/></Grid.Column>
+      <Grid.Column width={6}><ColdStorage hosts={hosts} onSetSelectedHostId={onSetSelectedHostId}/></Grid.Column>
       <Grid.Column width={5}>
-        <Details selectedHost={selectedHost} alterHostStatus={alterHostStatus} areas={areas}/>
+        <Details alterHostStatus={alterHostStatus} areas={areas} selectedHostId={selectedHostId} hosts={hosts} addLog={addLog}/>
       </Grid.Column>
       <Grid.Column width={3}>
-        <LogPanel onActivateState={onActivateState} activateState={activateState} alterAllHostActiveStatus={alterAllHostActiveStatus}/>
+        <LogPanel onActivateState={onActivateState} activateState={activateState} alterAllHostActiveStatus={alterAllHostActiveStatus} log={log}/>
       </Grid.Column>
     </Grid>
   );

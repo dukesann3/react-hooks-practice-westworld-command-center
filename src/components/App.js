@@ -4,13 +4,15 @@ import "../stylesheets/App.css";
 import Headquarters from './Headquarters';
 import WestworldMap from "./WestworldMap";
 import { useState, useEffect } from "react";
+import { Log } from "../services/Log";
 
 function App() {
 
   const [area, setArea] = useState([]);
   const [host, setHost] = useState([]);
-  const [selectedHost, setSelectedHost] = useState('');
+  const [selectedHostId, setSelectedHostId] = useState(null);
   const [activateState, setActivateState] = useState(false);
+  const [log, setLog] = useState([Log.notify('Booted agent distribution software beep beep boop')]);
 
   const areaFetchAPI = 'http://localhost:3001/areas';
   const hostsFetchAPI = 'http://localhost:3001/hosts';
@@ -28,8 +30,8 @@ function App() {
   }, [activateState]);
 
   //makes host profile appear on detail screen
-  function onSelectHost(host) {
-    setSelectedHost(host);
+  function onSelectHostId(id) {
+    setSelectedHostId(id);
   }
 
   function onAlterHostStatus(altedAgentData, alteredAgentId) {
@@ -56,12 +58,15 @@ function App() {
       .then(response => response.json())
       .then((data) => {
         onAlterHostStatus(data, id);
-        onSelectHost(data);
       });
   }
 
   function onActivateState() {
     setActivateState(!activateState);
+  }
+
+  function addLog(newLog) {
+    setLog([...log, newLog]);
   }
 
   function alterAllHostActiveStatus() {
@@ -91,7 +96,10 @@ function App() {
           throw error;
         })
     }))
-      .then(() => onActivateState())
+      .then(() => {
+        onActivateState();
+        addLog(Log.warn(!activateState ? 'All agents deployed' : 'All agents decommissioned'));
+      })
       .catch((error) => {
         throw error;
       })
@@ -99,8 +107,18 @@ function App() {
 
   return (
     <Segment id="app">
-      <WestworldMap areas={area} hosts={host} onSelectHost={onSelectHost} />
-      <Headquarters areas={area} hosts={host} onSelectHost={onSelectHost} selectedHost={selectedHost} alterHostStatus={alterHostStatus} onActivateState={onActivateState} activateState={activateState} alterAllHostActiveStatus={alterAllHostActiveStatus} />
+      <WestworldMap areas={area} hosts={host} onSetSelectedHostId={onSelectHostId} />
+      <Headquarters areas={area}
+        hosts={host}
+        selectedHostId={selectedHostId}
+        onSetSelectedHostId={onSelectHostId}
+        alterHostStatus={alterHostStatus}
+        onActivateState={onActivateState}
+        activateState={activateState}
+        alterAllHostActiveStatus={alterAllHostActiveStatus}
+        addLog={addLog}
+        log={log}
+      />
     </Segment>
   );
 }
